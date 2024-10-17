@@ -1,0 +1,11 @@
+[versions]
+kotlin = "2.0.20"
+
+[libraries]
+fastjson2 = { group = "com.alibaba.fastjson2", name = "fastjson2", version = "2.0.52" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version = "4.12.0" }
+dotenv = { group = "io.github.cdimascio", name = "java-dotenv", version = "5.2.2" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
