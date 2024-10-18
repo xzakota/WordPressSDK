@@ -1,6 +1,8 @@
 package com.xzakota.wordpress.model
 
 import com.alibaba.fastjson2.annotation.JSONField
+import com.xzakota.annotation.MapIgnore
+import java.io.File
 
 class Medium : CustomPost() {
     @JSONField(name = "alt_text")
@@ -29,4 +31,8 @@ class Medium : CustomPost() {
 
     @JSONField(name = "missing_image_sizes")
     var missingImageSizes : List<Any>? = null
+
+    @MapIgnore
+    @JSONField(serialize = false, deserialize = false)
+    var resource : File? = null
 }

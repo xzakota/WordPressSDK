@@ -8,6 +8,9 @@ plugins {
 
 group = "com.xzakota.wordpress"
 version = "1.0"
+val artifactID = "sdk-kt"
+val gitUrl = "https://github.com/xzakota/WordPressSDK"
+val author = "xzakota"
 
 dependencies {
     // implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
@@ -56,12 +59,12 @@ tasks {
 }
 
 mavenPublishing {
-    coordinates(project.group.toString(), "sdk-kt", project.version.toString())
+    coordinates(group.toString(), artifactID, version.toString())
 
     pom {
         name = rootProject.name
         description = "WP-SDK library built in Kotlin."
-        url = "https://github.com/xzakota/WordPressSDK"
+        url = gitUrl
         licenses {
             license {
                 name = "The Apache Software License, Version 2.0"
@@ -70,16 +73,16 @@ mavenPublishing {
         }
         developers {
             developer {
-                id = "xzakota"
-                name = "xzakota"
+                id = author
+                name = author
                 email = "xzakota@qq.com"
             }
         }
 
         scm {
-            connection = "scm:git:https://github.com/xzakota/WordPressSDK.git"
-            developerConnection = "scm:git:https://github.com/xzakota/WordPressSDK.git"
-            url = "https://github.com/xzakota/WordPressSDK"
+            connection = "scm:git:${gitUrl}.git"
+            developerConnection = connection
+            url = gitUrl
         }
     }
 

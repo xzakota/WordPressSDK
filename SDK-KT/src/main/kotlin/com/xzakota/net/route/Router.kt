@@ -15,12 +15,15 @@ import com.xzakota.net.ResponseTarget
 import okhttp3.Credentials.basic
 import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.MultipartBody
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import java.lang.RuntimeException
+import java.net.URLDecoder
 import java.util.function.BiFunction
 
-@Suppress("UsePropertyAccessSyntax")
 abstract class Router<T : ResponseTarget>(
     protected val client : Client,
     mainRoute : String,
@@ -76,7 +79,7 @@ abstract class Router<T : ResponseTarget>(
             ?: throw RuntimeException("$uri is a invalid url.")
 
         val urlBuilder = oldUrl.newBuilder()
-        if (queryParams != null && !queryParams.isEmpty()) {
+        if (!queryParams.isNullOrEmpty()) {
             queryParams.forEach { k, v ->
                 urlBuilder.addQueryParameter(k, v.toString())
             }
@@ -85,7 +88,7 @@ abstract class Router<T : ResponseTarget>(
         val newUrl = urlBuilder.build()
         val headers = buildHeaders()
         if (client.debug) {
-            println(method.value + ": " + newUrl)
+            println(method.value + ": " + URLDecoder.decode(newUrl.toString(), Charsets.UTF_8))
         }
 
         val entity = ResponseEntity<E>()
@@ -96,7 +99,17 @@ abstract class Router<T : ResponseTarget>(
                 .method(
                     method.value,
                     if (method != HttpMethod.GET && !requestBody.isNullOrEmpty()) {
-                        JSON.toJSONString(requestBody).toRequestBody(MediaTypePool.JSON)
+                        val file = requestBody.get("file")
+                        if (file is File) {
+                            val body = MultipartBody.Builder().setType(MultipartBody.FORM)
+                            requestBody.forEach { k, v ->
+                                body.addFormDataPart(k, v.toString())
+                            }
+                            body.addFormDataPart("file", file.name, file.asRequestBody(MediaTypePool.OCTET_STREAM))
+                            body.build()
+                        } else {
+                            JSON.toJSONString(requestBody).toRequestBody(MediaTypePool.JSON)
+                        }
                     } else {
                         null
                     }
@@ -107,7 +120,7 @@ abstract class Router<T : ResponseTarget>(
             entity.body = response.body?.string()
                 ?: throw BadRequestException("Response body is null.")
 
-            if (entity.code != 200) {
+            if (entity.code < 200 || entity.code > 299) {
                 throw JSON.parseObject(entity.body, BadRequestException::class.java)
             } else {
                 val initFields = BiFunction { obj : ResponseTarget, map : JSONObject ->
@@ -146,7 +159,7 @@ abstract class Router<T : ResponseTarget>(
     private fun buildHeaders() : Headers {
         val builder = Headers.Builder()
             .add("User-Agent", client.userAgent)
-            .add("Accept", "application/json")
+            .add("Accept", "*/*")
 
         if (client.auth.type == Authentication.AuthType.APPLICATION) {
             val username = client.auth.username

@@ -3,10 +3,13 @@ package com.xzakota.wordpress
 import com.xzakota.collect.KStrVObj
 import com.xzakota.model.Authentication
 import com.xzakota.net.ResponseTarget
+import com.xzakota.wordpress.model.Medium
+import com.xzakota.wordpress.model.RenderedField
 import com.xzakota.wordpress.model.status.ItemStatus
 import io.github.cdimascio.dotenv.Dotenv
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import java.io.File
 import kotlin.test.Test
 
 class WPClientTest {
@@ -46,10 +49,21 @@ class WPClientTest {
 
     @Test
     fun mediaTest() {
-        val media = client.request().media().list()
-        println("List of Medium: ")
-        println(media)
-        divide()
+        client.request().media { mediaRouter ->
+            val media = mediaRouter.list()
+            println("List of Medium: ")
+            println(media)
+            divide()
+
+            val file = File("/path/test.png")
+            if (file.exists() && file.isFile()) {
+                val newMedium = Medium()
+                newMedium.resource = file
+                newMedium.title = RenderedField("test")
+                val uploadedMedium = mediaRouter.create(newMedium)
+                println("Uploaded new file: $uploadedMedium")
+            }
+        }
     }
 
     @Test

@@ -67,10 +67,18 @@ interface IListable<T : ResponseTarget> : IPageable<T> {
         return collected
     }
 
+    fun listByPage(page : Int) : PagedResponse<T> {
+        return listByPage(page, DEFAULT_PRE_PAGE)
+    }
+
+    fun listByPage(page : Int, perPage : Int) : PagedResponse<T> {
+        return listByPage(page, perPage, null)
+    }
+
     fun listByPage(
         page : Int,
-        perPage : Int = DEFAULT_PRE_PAGE,
-        otherQueryParams : KStrVObj? = null
+        perPage : Int,
+        otherQueryParams : KStrVObj?
     ) : PagedResponse<T> {
         return listByPage(getRouter().uri, getRouter().resRef, page, perPage, otherQueryParams)
     }
@@ -78,9 +86,26 @@ interface IListable<T : ResponseTarget> : IPageable<T> {
     fun <E : ResponseTarget> listByPage(
         uri : String,
         typeRef : Class<E>,
+        page : Int
+    ) : PagedResponse<E> {
+        return listByPage(uri, typeRef, page, DEFAULT_PRE_PAGE)
+    }
+
+    fun <E : ResponseTarget> listByPage(
+        uri : String,
+        typeRef : Class<E>,
         page : Int,
-        perPage : Int = DEFAULT_PRE_PAGE,
-        otherQueryParams : KStrVObj? = null
+        perPage : Int,
+    ) : PagedResponse<E> {
+        return listByPage(uri, typeRef, page, DEFAULT_PRE_PAGE, null)
+    }
+
+    fun <E : ResponseTarget> listByPage(
+        uri : String,
+        typeRef : Class<E>,
+        page : Int,
+        perPage : Int,
+        otherQueryParams : KStrVObj?
     ) : PagedResponse<E> {
         var page = page
         var perPage = perPage

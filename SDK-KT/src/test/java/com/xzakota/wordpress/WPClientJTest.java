@@ -6,13 +6,16 @@ import com.xzakota.net.ResponseTarget;
 import com.xzakota.wordpress.model.Medium;
 import com.xzakota.wordpress.model.Page;
 import com.xzakota.wordpress.model.Post;
+import com.xzakota.wordpress.model.RenderedField;
 import com.xzakota.wordpress.model.status.ItemStatus;
 import com.xzakota.wordpress.model.status.Status;
+import com.xzakota.wordpress.request.RouteRequest;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,9 +55,20 @@ public class WPClientJTest {
 
     @Test
     public void mediaTest() {
-        List<Medium> media = client.request().media().list();
+        RouteRequest.Media mediaRouter = client.request().media();
+        List<Medium> media = mediaRouter.list();
         println("List of Medium: ");
         println(media);
+
+        File file = new File("/path/test.png");
+        if (file.exists() && file.isFile()) {
+            Medium newMedium = new Medium();
+            newMedium.setResource(file);
+            newMedium.setTitle(new RenderedField("test"));
+            Medium uploadedMedium = mediaRouter.create(newMedium);
+            println("Uploaded new file: " + uploadedMedium);
+        }
+
         divide();
     }
 

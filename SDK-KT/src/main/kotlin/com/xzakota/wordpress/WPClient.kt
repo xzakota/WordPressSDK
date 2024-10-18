@@ -20,6 +20,7 @@ class WPClient(server : String, admin : Authentication) : Client(server, admin) 
         }
     }
 
+    @JvmSynthetic
     fun request(block : RouteRequest.() -> Unit) : RouteRequest {
         return request.also(block)
     }

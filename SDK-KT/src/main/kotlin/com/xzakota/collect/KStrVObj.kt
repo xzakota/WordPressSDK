@@ -12,8 +12,8 @@ class KStrVObj : HashMap<String, Any?> {
         return this
     }
 
-    fun push(map : KStrVObj) : KStrVObj {
-        putAll(map)
+    fun push(map : KStrVObj?) : KStrVObj {
+        map?.let { putAll(it) }
         return this
     }
 

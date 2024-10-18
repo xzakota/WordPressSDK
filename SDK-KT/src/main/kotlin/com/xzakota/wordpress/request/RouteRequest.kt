@@ -26,6 +26,7 @@ import com.xzakota.wordpress.route.WPRoute
 import com.xzakota.wordpress.route.WPRouter
 import com.xzakota.wordpress.route.WPV2Router
 
+@Suppress("unused")
 class RouteRequest private constructor(private val client : WPClient) {
     @JvmOverloads
     fun customPosts(
@@ -140,7 +141,19 @@ class RouteRequest private constructor(private val client : WPClient) {
 
     class Media(
         client : WPClient
-    ) : CustomPostRouter<Medium>(client, WPRoute.MEDIA, Medium::class.java)
+    ) : CustomPostRouter<Medium>(client, WPRoute.MEDIA, Medium::class.java) {
+        override fun create(target : Medium, otherRequestBody : KStrVObj?) : Medium? {
+            return super.create(target, otherRequestBody?.push("file", target.resource))
+        }
+
+        override fun update(
+            secondaryRoute : String?,
+            target : Medium,
+            otherRequestBody : KStrVObj?
+        ) : Medium? {
+            return super.update(secondaryRoute, target, otherRequestBody?.push("file", target.resource))
+        }
+    }
 
     class Users(
         client : WPClient
