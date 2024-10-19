@@ -58,6 +58,6 @@ class User : IDItem() {
     var links : Links? = null
 
     override fun toString() : String {
-        return super.toString() + ": " + username + "(" + email + ")"
+        return super.toString() + ": " + name
     }
 }

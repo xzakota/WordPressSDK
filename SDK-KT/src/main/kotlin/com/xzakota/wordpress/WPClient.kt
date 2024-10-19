@@ -6,7 +6,7 @@ import com.xzakota.wordpress.model.User
 import com.xzakota.wordpress.request.RequestCallback
 import com.xzakota.wordpress.request.RouteRequest
 
-class WPClient(server : String, admin : Authentication) : Client(server, admin) {
+class WPClient(server : String, auth : Authentication) : Client(server, auth) {
     private val request = RouteRequest.withClient(this)
 
     init {
@@ -31,19 +31,13 @@ class WPClient(server : String, admin : Authentication) : Client(server, admin) 
         val oldDebug = debug
         debug = false
 
-        var user : User? = null
-        request.users {
+        var user : User?
+        request.users { router ->
             println("Test basic connectivity...")
             try {
-                val list = it.listByPage(1, 1).entity
-                result = if (!list.isNullOrEmpty()) {
-                    user = list[0]
-                    true
-                } else {
-                    false
-                }
+                user = router.retrieveMe()
+                result = user != null
             } catch (e : Exception) {
-                result = false
                 throw e
             } finally {
                 if (result) {
@@ -55,11 +49,13 @@ class WPClient(server : String, admin : Authentication) : Client(server, admin) 
 
             println("Test user connectivity...")
             try {
-                result = if (user != null) {
-                    !it.listAppPwdByUserId(user.id!!).isNullOrEmpty() && result
-                } else {
-                    false
-                }
+                result = user?.let {
+                    if (auth.type == Authentication.AuthType.APPLICATION) {
+                        !router.listAppPwdByUser(it).isNullOrEmpty()
+                    } else {
+                        false
+                    } && result
+                } == true
             } catch (e : Exception) {
                 result = false
                 throw e
@@ -78,7 +74,7 @@ class WPClient(server : String, admin : Authentication) : Client(server, admin) 
     }
 
     companion object {
-        private const val IDENTIFIER = "WordPress JAVA SDK"
-        private const val VERSION = "1.0"
+        private const val IDENTIFIER = "WordPress Kotlin SDK"
+        private const val VERSION = "1.1"
     }
 }

@@ -21,8 +21,8 @@ class WPClientTest {
         fun setup() {
             val env = Dotenv.load()
             val server = env["SERVER_HTTPS_URL"]
-            val username = env["ADMIN_USERNAME"]
-            val password = env["ADMIN_APPLICATION_PASSWORD"]
+            val username = env["AUTH_USERNAME"]
+            val password = env["AUTH_APPLICATION_PASSWORD"]
 
             if (server == null || username == null || password == null) {
                 error("Please configure .env file!")
@@ -45,6 +45,16 @@ class WPClientTest {
         private fun divide() {
             println("-".repeat(80))
         }
+    }
+
+    @Test
+    fun userTest() {
+        val user = client.request().users().retrieveById(1L)
+        if (user != null) {
+            println("The first user of the website: ")
+            println(user.asMap())
+        }
+        divide()
     }
 
     @Test
@@ -83,7 +93,6 @@ class WPClientTest {
         } else {
             println("No post with ID 1.")
         }
-
         divide()
     }
 
@@ -98,7 +107,6 @@ class WPClientTest {
                 println(themeStylesheet)
             }
         }
-
         divide()
     }
 }

@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONArray
 import com.alibaba.fastjson2.JSONObject
 import com.xzakota.collect.KStrVObj
-import com.xzakota.collect.KStrVObj.Companion.of
 import com.xzakota.model.Authentication
 import com.xzakota.model.media.MediaTypePool
 import com.xzakota.net.BadRequestException
@@ -12,7 +11,7 @@ import com.xzakota.net.Client
 import com.xzakota.net.HttpMethod
 import com.xzakota.net.ResponseEntity
 import com.xzakota.net.ResponseTarget
-import okhttp3.Credentials.basic
+import okhttp3.Credentials
 import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MultipartBody
@@ -121,11 +120,15 @@ abstract class Router<T : ResponseTarget>(
                 ?: throw BadRequestException("Response body is null.")
 
             if (entity.code < 200 || entity.code > 299) {
-                throw JSON.parseObject(entity.body, BadRequestException::class.java)
+                if (entity.body!!.startsWith("{")) {
+                    throw JSON.parseObject(entity.body, BadRequestException::class.java)
+                } else {
+                    throw RuntimeException(entity.body)
+                }
             } else {
                 val initFields = BiFunction { obj : ResponseTarget, map : JSONObject ->
                     if (obj.allFields == null) {
-                        obj.allFields = of()
+                        obj.allFields = KStrVObj.of()
                     }
                     obj.allFields?.putAll(map)
                 }
@@ -165,7 +168,7 @@ abstract class Router<T : ResponseTarget>(
             val username = client.auth.username
             val password = client.auth.password
             if (username != null && password != null) {
-                val credential = basic(username, password)
+                val credential = Credentials.basic(username, password)
                 builder.add("Authorization", credential)
             }
         }

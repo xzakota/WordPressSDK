@@ -3,13 +3,10 @@ package com.xzakota.wordpress;
 import com.xzakota.collect.KStrVObj;
 import com.xzakota.model.Authentication;
 import com.xzakota.net.ResponseTarget;
-import com.xzakota.wordpress.model.Medium;
-import com.xzakota.wordpress.model.Page;
-import com.xzakota.wordpress.model.Post;
-import com.xzakota.wordpress.model.RenderedField;
+import com.xzakota.wordpress.model.*;
 import com.xzakota.wordpress.model.status.ItemStatus;
 import com.xzakota.wordpress.model.status.Status;
-import com.xzakota.wordpress.request.RouteRequest;
+import com.xzakota.wordpress.request.Media;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,8 +23,8 @@ public class WPClientJTest {
     public static void setup() throws Exception {
         Dotenv env = Dotenv.load();
         String server = env.get("SERVER_HTTPS_URL");
-        String username = env.get("ADMIN_USERNAME");
-        String password = env.get("ADMIN_APPLICATION_PASSWORD");
+        String username = env.get("AUTH_USERNAME");
+        String password = env.get("AUTH_APPLICATION_PASSWORD");
 
         if (server == null || username == null || password == null) {
             throw new RuntimeException("Please configure .env file!");
@@ -54,8 +51,18 @@ public class WPClientJTest {
     }
 
     @Test
+    public void userTest() {
+        User user = client.request().users().retrieveById(1L);
+        if (user != null) {
+            println("The first user of the website: ");
+            println(user.asMap());
+        }
+        divide();
+    }
+
+    @Test
     public void mediaTest() {
-        RouteRequest.Media mediaRouter = client.request().media();
+        Media mediaRouter = client.request().media();
         List<Medium> media = mediaRouter.list();
         println("List of Medium: ");
         println(media);
@@ -94,16 +101,14 @@ public class WPClientJTest {
 
     @Test
     public void themeTest() {
-        client.request(request -> {
-            request.router("/themes", ResponseTarget.class, router -> {
-                List<ResponseTarget> themes = router.list(KStrVObj.of());
-                List<Object> themeStylesheet = themes.stream().map(obj -> {
-                    KStrVObj allFields = obj.getAllFields();
-                    return allFields != null ? allFields.get("stylesheet") : null;
-                }).toList();
-                println(themeStylesheet);
-            });
-        });
+        client.request(request -> request.router("/themes", ResponseTarget.class, router -> {
+            List<ResponseTarget> themes = router.list(KStrVObj.of());
+            List<Object> themeStylesheet = themes.stream().map(obj -> {
+                KStrVObj allFields = obj.getAllFields();
+                return allFields != null ? allFields.get("stylesheet") : null;
+            }).toList();
+            println(themeStylesheet);
+        }));
         divide();
     }
 }

@@ -31,11 +31,14 @@ open class IDRouter<T : IDItem>(
     }
 
     @JvmOverloads
-    fun deleteById(id : Long, force : Boolean = false) : DeletedItem<T>? {
-        return deleteById(id.toString(), KStrVObj.of().push("force", force))
+    open fun deleteById(id : Long, force : Boolean? = null) : DeletedItem<T>? {
+        return deleteById(id.toString(), force?.let {
+            KStrVObj.of().push("force", it)
+        })
     }
 
-    fun deleteById(identifier : String, requestBody : KStrVObj?) : DeletedItem<T>? {
+    @JvmOverloads
+    open fun deleteById(identifier : String, requestBody : KStrVObj? = null) : DeletedItem<T>? {
         return delete(checkRoute(identifier), requestBody)
     }
 }

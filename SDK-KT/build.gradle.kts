@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.xzakota.wordpress"
-version = "1.0"
+version = "1.1"
 val artifactID = "sdk-kt"
 val gitUrl = "https://github.com/xzakota/WordPressSDK"
 val author = "xzakota"
