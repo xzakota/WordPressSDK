@@ -88,6 +88,14 @@ class RouteRequest private constructor(private val client : WPClient) {
     }
 
     @JvmOverloads
+    fun router(
+        mainRoute : String,
+        block : RouterCallback<WPRouter<ResponseTarget>> = RouterCallback {}
+    ) : WPRouter<ResponseTarget> {
+        return router(mainRoute, ResponseTarget::class.java, block)
+    }
+
+    @JvmOverloads
     fun <T : ResponseTarget> router(
         mainRoute : String,
         typeRef : Class<T>,

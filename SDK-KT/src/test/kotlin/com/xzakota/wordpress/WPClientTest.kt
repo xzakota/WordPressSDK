@@ -52,7 +52,7 @@ class WPClientTest {
         val user = client.request().users().retrieveById(1L)
         if (user != null) {
             println("The first user of the website: ")
-            println(user.asMap())
+            println(user.allFields)
         }
         divide()
     }
@@ -99,7 +99,7 @@ class WPClientTest {
     @Test
     fun themeTest() {
         client.request {
-            router("/themes", ResponseTarget::class.java) { router ->
+            router("/themes") { router ->
                 var themes = router.list(KStrVObj.of())
                 val themeStylesheet = themes.map { obj : ResponseTarget ->
                     obj.allFields?.get("stylesheet")

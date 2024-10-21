@@ -1,5 +1,6 @@
 package com.xzakota.net
 
+import com.alibaba.fastjson2.JSONObject
 import com.alibaba.fastjson2.annotation.JSONField
 import com.xzakota.annotation.MapIgnore
 import com.xzakota.collect.KStrVObj
@@ -9,7 +10,7 @@ import com.xzakota.wordpress.model.RenderedField
 open class ResponseTarget {
     @MapIgnore
     @JSONField(serialize = false, deserialize = false)
-    var allFields : KStrVObj? = null
+    var allFields : JSONObject? = null
 
     open fun asMap() : KStrVObj {
         val result = of()
@@ -21,11 +22,11 @@ open class ResponseTarget {
             for (field in fields) {
                 field.setAccessible(true)
 
-                if (field.getAnnotation<MapIgnore>(MapIgnore::class.java) != null) {
+                if (field.getAnnotation(MapIgnore::class.java) != null) {
                     continue
                 }
 
-                val jsonField = field.getAnnotation<JSONField?>(JSONField::class.java)
+                val jsonField = field.getAnnotation(JSONField::class.java)
                 val key = if (jsonField != null && !jsonField.name.isEmpty()) {
                     jsonField.name
                 } else {

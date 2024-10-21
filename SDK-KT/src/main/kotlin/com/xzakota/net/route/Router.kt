@@ -21,7 +21,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.lang.RuntimeException
 import java.net.URLDecoder
-import java.util.function.BiFunction
 
 abstract class Router<T : ResponseTarget>(
     protected val client : Client,
@@ -120,39 +119,33 @@ abstract class Router<T : ResponseTarget>(
                 ?: throw BadRequestException("Response body is null.")
 
             if (entity.code < 200 || entity.code > 299) {
-                if (entity.body!!.startsWith("{")) {
-                    throw JSON.parseObject(entity.body, BadRequestException::class.java)
+                throw if (entity.body!!.startsWith("{")) {
+                    JSON.parseObject(entity.body, BadRequestException::class.java)
                 } else {
-                    throw RuntimeException(entity.body)
+                    RuntimeException(entity.body)
                 }
             } else {
-                val initFields = BiFunction { obj : ResponseTarget, map : JSONObject ->
-                    if (obj.allFields == null) {
-                        obj.allFields = KStrVObj.of()
-                    }
-                    obj.allFields?.putAll(map)
-                }
-
-                val parseObj = JSON.parse(entity.body)
-                var e : E? = null
-                if (parseObj is JSONArray) {
-                    e = parseObj.to(typeRef)
-
-                    if (e is Array<*>) {
-                        e.forEachIndexed { i, o ->
-                            if (o is ResponseTarget) {
-                                initFields.apply(o, parseObj.getJSONObject(i))
+                entity.target = JSON.parse(entity.body).let { parseObj ->
+                    if (parseObj is JSONArray) {
+                        parseObj.to(typeRef).also { a ->
+                            if (a is Array<*>) {
+                                a.forEachIndexed { i, o ->
+                                    if (o is ResponseTarget) {
+                                        o.allFields = parseObj.getJSONObject(i)
+                                    }
+                                }
                             }
                         }
-                    }
-                } else if (parseObj is JSONObject) {
-                    e = parseObj.to(typeRef)
-                    if (e is ResponseTarget) {
-                        initFields.apply(e, JSON.parseObject(entity.body))
+                    } else if (parseObj is JSONObject) {
+                        parseObj.to(typeRef).also { o ->
+                            if (o is ResponseTarget) {
+                                o.allFields = parseObj
+                            }
+                        }
+                    } else {
+                        null
                     }
                 }
-
-                entity.target = e
             }
         }
 

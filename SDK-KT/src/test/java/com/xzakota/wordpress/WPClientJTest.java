@@ -1,5 +1,6 @@
 package com.xzakota.wordpress;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.xzakota.collect.KStrVObj;
 import com.xzakota.model.Authentication;
 import com.xzakota.net.ResponseTarget;
@@ -42,11 +43,11 @@ public class WPClientJTest {
         client.disconnect();
     }
 
-    public static void divide() {
+    private static void divide() {
         println("-".repeat(80));
     }
 
-    public static void println(Object o) {
+    private static void println(Object o) {
         System.out.println(o);
     }
 
@@ -55,7 +56,7 @@ public class WPClientJTest {
         User user = client.request().users().retrieveById(1L);
         if (user != null) {
             println("The first user of the website: ");
-            println(user.asMap());
+            println(user.getAllFields());
         }
         divide();
     }
@@ -101,14 +102,14 @@ public class WPClientJTest {
 
     @Test
     public void themeTest() {
-        client.request(request -> request.router("/themes", ResponseTarget.class, router -> {
+        client.request().router("/themes", router -> {
             List<ResponseTarget> themes = router.list(KStrVObj.of());
             List<Object> themeStylesheet = themes.stream().map(obj -> {
-                KStrVObj allFields = obj.getAllFields();
+                JSONObject allFields = obj.getAllFields();
                 return allFields != null ? allFields.get("stylesheet") : null;
             }).toList();
             println(themeStylesheet);
-        }));
+        });
         divide();
     }
 }
