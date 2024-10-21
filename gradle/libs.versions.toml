@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.0.20"
+kotlin = "2.0.21"
 
 [libraries]
 fastjson2 = { group = "com.alibaba.fastjson2", name = "fastjson2", version = "2.0.52" }
