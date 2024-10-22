@@ -4,7 +4,7 @@ object WPRoute {
     const val API_REST_ROUTE = "/?rest_route="
 
     // const val API_WP_JSON = "/wp-json"
-    const val V2_ROUTE_PREFIX = "/wp/v2"
+    const val NAMESPACE_WP_V2 = "/wp/v2"
 
     const val USERS = "/users"
 

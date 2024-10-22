@@ -1,10 +1,11 @@
-package com.xzakota.wordpress.route
+package com.xzakota.wordpress.route.endpoint
 
 import com.xzakota.collect.KStrVObj
 import com.xzakota.net.HttpMethod
 import com.xzakota.net.ResponseTarget
 import com.xzakota.wordpress.model.HeaderLink
 import com.xzakota.wordpress.response.PagedResponse
+import com.xzakota.wordpress.route.IWPRouter
 import okhttp3.Headers
 import java.util.Arrays
 

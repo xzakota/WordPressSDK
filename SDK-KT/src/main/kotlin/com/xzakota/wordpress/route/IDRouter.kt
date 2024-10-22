@@ -4,6 +4,7 @@ import com.xzakota.collect.KStrVObj
 import com.xzakota.wordpress.WPClient
 import com.xzakota.wordpress.model.DeletedItem
 import com.xzakota.wordpress.model.IDItem
+import com.xzakota.wordpress.route.endpoint.IListable
 
 @Suppress("unused")
 open class IDRouter<T : IDItem>(

@@ -1,9 +1,10 @@
-package com.xzakota.wordpress.route
+package com.xzakota.wordpress.route.endpoint
 
 import com.alibaba.fastjson2.JSON
 import com.xzakota.collect.KStrVObj
 import com.xzakota.net.ResponseTarget
 import com.xzakota.wordpress.model.DeletedItem
+import com.xzakota.wordpress.route.IWPRouter
 
 @Suppress("UNCHECKED_CAST")
 interface IDeletable<T : ResponseTarget> : IWPRouter<T> {

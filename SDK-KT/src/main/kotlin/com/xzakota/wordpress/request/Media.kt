@@ -5,6 +5,7 @@ import com.xzakota.wordpress.WPClient
 import com.xzakota.wordpress.model.Medium
 import com.xzakota.wordpress.route.CustomPostRouter
 import com.xzakota.wordpress.route.WPRoute
+import com.xzakota.wordpress.route.endpoint.ICreatable
 
 class Media(
     client : WPClient

@@ -3,6 +3,11 @@ package com.xzakota.wordpress.route
 import com.xzakota.net.ResponseTarget
 import com.xzakota.net.route.Router
 import com.xzakota.wordpress.WPClient
+import com.xzakota.wordpress.route.endpoint.ICreatable
+import com.xzakota.wordpress.route.endpoint.IDeletable
+import com.xzakota.wordpress.route.endpoint.IListable
+import com.xzakota.wordpress.route.endpoint.IRetrievable
+import com.xzakota.wordpress.route.endpoint.IUpdatable
 import java.lang.RuntimeException
 
 abstract class WPRouter<T : ResponseTarget>(

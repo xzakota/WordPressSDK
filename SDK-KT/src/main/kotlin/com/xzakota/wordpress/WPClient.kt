@@ -33,7 +33,7 @@ class WPClient(server : String, auth : Authentication) : Client(server, auth) {
 
         var user : User?
         request.users { router ->
-            println("Test basic connectivity...")
+            print("Test basic connection...")
             try {
                 user = router.retrieveMe()
                 result = user != null
@@ -41,13 +41,13 @@ class WPClient(server : String, auth : Authentication) : Client(server, auth) {
                 throw e
             } finally {
                 if (result) {
-                    println("Basic connectivity passed")
+                    println(" passed~")
                 } else {
-                    println("Basic connectivity failed")
+                    println(" failed!")
                 }
             }
 
-            println("Test user connectivity...")
+            print("Test user connection...")
             try {
                 result = user?.let {
                     if (auth.type == Authentication.AuthType.APPLICATION) {
@@ -61,9 +61,9 @@ class WPClient(server : String, auth : Authentication) : Client(server, auth) {
                 throw e
             } finally {
                 if (result) {
-                    println("User connectivity passed")
+                    println(" passed~")
                 } else {
-                    println("User connectivity failed, unauthorized")
+                    println(" failed, unauthorized!")
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.xzakota.wordpress.route
+package com.xzakota.wordpress.route.endpoint
 
 import com.xzakota.collect.KStrVObj
 import com.xzakota.net.ResponseTarget

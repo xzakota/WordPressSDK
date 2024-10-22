@@ -1,7 +1,8 @@
-package com.xzakota.wordpress.route
+package com.xzakota.wordpress.route.endpoint
 
 import com.xzakota.collect.KStrVObj
 import com.xzakota.net.ResponseTarget
+import com.xzakota.wordpress.route.IWPRouter
 
 @Suppress("UNCHECKED_CAST")
 interface ICreatable<T : ResponseTarget> : IWPRouter<T> {
